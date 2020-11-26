@@ -1,0 +1,88 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    overflow-y: hidden;
+    background: url("img/hs_bg.jpg");
+    background-size: cover;
+    font-family: 'Bangers', cursive, sans-serif;
+    justify-content: center;
+}
+
+.board, body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.top-bar {
+    padding-bottom: 15px;
+    width: 100%;
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.top-bar select {
+    font-size: inherit;
+    font-family: 'Bangers', cursive;
+    width: 170px;
+}
+
+.board {
+    padding-top: 50px;
+    justify-content: space-between;
+}
+
+.card {
+    position: relative;
+    width: 113px;
+    height: 113px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    margin-bottom: 15px;
+}
+
+.card-front, .card-back, .card {
+    border-radius: 5px;
+}
+
+.card-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url(img/card_front.jpg) center/cover;
+}
+
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: rotateY(180deg);
+    background-position: center;
+    background-size: cover;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
