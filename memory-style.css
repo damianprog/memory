@@ -34,6 +34,15 @@ body {
     width: 170px;
 }
 
+.top-bar .moves-counter {
+    padding-right: 10px;
+}
+
+.time-counter {
+    display: inline-block;
+    width: 45px;
+}
+
 .board {
     padding-top: 50px;
     justify-content: space-between;
@@ -48,7 +57,7 @@ body {
     margin-bottom: 15px;
 }
 
-.card-front, .card-back, .card {
+.card-front, .card-back, .card, .win-board, .win-board-restart {
     border-radius: 5px;
 }
 
@@ -68,8 +77,37 @@ body {
     background-size: cover;
 }
 
+.win-board {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%,-50%);
+    color: #fff;
+    font-size: 20px;
+    width: 540px;
+    height: 300px;
+    background: url("img/win_board.jpg") center/cover;
+    letter-spacing: 0.02em;
+    text-align: center;
+    display: none;
+}
 
+.win-board h1 {
+    padding: 30px 0;
+}
 
+.win-board-restart {
+    background: url(img/button.png) center/cover;
+    width: 165px;
+    height: 66px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    margin: 82px auto 0 auto;
+    cursor: pointer;
+    user-select: none;
+}
 
 
 

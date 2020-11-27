@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
 </head>
 
-<body>
+<spanody>
     <div class="board">
         <div class="top-bar">
             <select>
@@ -15,14 +15,18 @@
                 <option value="24">Medium (24 Cards)</option>
                 <option value="32">Hard (32 Cards)</option>
             </select>
-            <div class="top-bar-right">
-                <span>Moves: 67</span>
-                <span>Time: 06:26</span>
+            <div class="top-bar-labels">
+                <span>Moves: <span class="moves-counter">0</span></span>
+                <span>Time: <span class="time-counter">00:00</span></span>
             </div>
         </div>
-
+    </div>
+    <div class="win-board">
+        <h1>You Win !</h1>
+        <p>You win in <span class="win-board-time"></span> with Moves: <span class="win-board-moves">
+        </span> on Difficulty: <span class="win-board-difficulty"></span></p>
+        <div class="win-board-restart">Restart</div>
     </div>
 </body>
 <script type="text/javascript" src="memory-logic.js"></script>
-
 </html>
