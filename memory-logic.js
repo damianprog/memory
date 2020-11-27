@@ -7,7 +7,7 @@
     let timeCounterInterval = "";
 
     let cardsMaxQty = parseInt(levelDropdown[2].value);
-    let cardsCurrentQty = parseInt(levelDropdown[0].value);
+    let difficultyCardsQty = parseInt(levelDropdown[0].value);
 
     let cardsHTML = "";
 
@@ -37,21 +37,21 @@
     };
 
     const setBoardWidth = () => {
-        const boardWidth = ((cardsCurrentQty / 4) * 128) - 15;
+        const boardWidth = ((difficultyCardsQty / 4) * 128) - 15;
         board.style.width = `${boardWidth}px`;
     };
 
     const setCards = () => {
         cardElements.forEach((card, index) => {
-            card.style.opacity = index >= cardsCurrentQty ? 0 : 1;
-            card.style.pointerEvents = "auto";
+            card.style.opacity = index >= difficultyCardsQty ? 0 : 1;
+            card.style.pointerEvents = index >= difficultyCardsQty ? "none" : "";
         });
     };
 
     const shuffleCards = () => {
-        let cardNumbers = [...Array(cardsCurrentQty).keys()];
+        let cardNumbers = [...Array(difficultyCardsQty).keys()];
 
-        for (let i = 0; i < cardsCurrentQty; i++) {
+        for (let i = 0; i < difficultyCardsQty; i++) {
             const cardRandomIndex = Math.floor(Math.random() * cardNumbers.length);
             const card = cardElements[cardNumbers[cardRandomIndex]];
 
@@ -67,9 +67,9 @@
     shuffleCards();
 
     levelDropdown.addEventListener("change", event => {
-        cardsCurrentQty = parseInt(event.target.value);
-        cardsLeftQty = cardsCurrentQty ;
+        difficultyCardsQty = parseInt(event.target.value);
         window.clearInterval(timeCounterInterval);
+        cardsLeftQty = difficultyCardsQty ;
         movesCounter.innerHTML = "0";
         timeCounter.innerHTML = "00:00";
         setBoardWidth();
@@ -77,8 +77,7 @@
         shuffleCards();
     });
 
-    let reversedCard = "";
-    let cardsLeftQty = cardsCurrentQty ;
+    let cardsLeftQty = difficultyCardsQty ;
 
     const winBoard = document.querySelector(".win-board");
     const winBoardTime = document.querySelector(".win-board-time");
@@ -101,15 +100,16 @@
         winBoard.style.display = "none";
         movesCounter.innerHTML = "0";
         timeCounter.innerHTML = "00:00";
-        cardsLeftQty = cardsCurrentQty ;
+        cardsLeftQty = difficultyCardsQty;
         setCards();
         shuffleCards();
     });
 
+    let reversedCard = "";
+
     cardElements.forEach(card => {
         card.addEventListener("click", () => {
             card.style.transform = "rotateY(180deg)";
-            console.log("Card clicked!");
             if (reversedCard == "") {
                 reversedCard = card;
             } else if (!card.isSameNode(reversedCard)) {
