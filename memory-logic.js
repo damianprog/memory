@@ -11,28 +11,35 @@
 
     let cardsHTML = "";
 
-    for (let i = 0; i < cardsMaxQty; i++) {
-        cardsHTML = cardsHTML.concat("<div class='card'><div class='card-front'></div><div class='card-back'></div></div>");
-    }
+    const createCardElements = () => {
+        for (let i = 0; i < cardsMaxQty; i++) {
+            cardsHTML = cardsHTML.concat("<div class='card'><div class='card-front'></div><div class='card-back'></div></div>");
+        }
+    
+        board.insertAdjacentHTML('beforeend', cardsHTML);
+    };
 
-    board.insertAdjacentHTML('beforeend', cardsHTML);
-
-    let cardElements = document.querySelectorAll(".card");
+    createCardElements();
 
     let minutesSeconds = "";
+
+    const incrementTime = () => {
+        minutesSeconds = timeCounter.innerHTML.split(":");
+        minutesSeconds[1] = parseInt(minutesSeconds[1]) + 1;
+        if (minutesSeconds[1] > 59) {
+            minutesSeconds[1] = 0;
+            minutesSeconds[0] = parseInt(minutesSeconds[0]) + 1;
+        }
+
+        if (minutesSeconds[0] < 10) minutesSeconds[0] = minutesSeconds[0].toString().padStart(2, '0');
+        if (minutesSeconds[1] < 10) minutesSeconds[1] = minutesSeconds[1].toString().padStart(2, '0');
+
+        timeCounter.innerHTML = `${minutesSeconds[0]}:${minutesSeconds[1]}`;
+    };
+
     const startTimer = () => {
         timeCounterInterval = window.setInterval(() => {
-            minutesSeconds = timeCounter.innerHTML.split(":");
-            minutesSeconds[1] = parseInt(minutesSeconds[1]) + 1;
-            if (minutesSeconds[1] > 59) {
-                minutesSeconds[1] = 0;
-                minutesSeconds[0] = parseInt(minutesSeconds[0]) + 1;
-            }
-
-            if (minutesSeconds[0] < 10) minutesSeconds[0] = minutesSeconds[0].toString().padStart(2, '0');
-            if (minutesSeconds[1] < 10) minutesSeconds[1] = minutesSeconds[1].toString().padStart(2, '0');
-
-            timeCounter.innerHTML = `${minutesSeconds[0]}:${minutesSeconds[1]}`;
+            incrementTime();
         }, 1000);
     };
 
@@ -40,6 +47,8 @@
         const boardWidth = ((difficultyCardsQty / 4) * 128) - 15;
         board.style.width = `${boardWidth}px`;
     };
+
+    let cardElements = document.querySelectorAll(".card");
 
     const setCards = () => {
         cardElements.forEach((card, index) => {
@@ -52,13 +61,13 @@
         let cardNumbers = [...Array(difficultyCardsQty).keys()];
 
         for (let i = 0; i < difficultyCardsQty; i++) {
-            const cardRandomIndex = Math.floor(Math.random() * cardNumbers.length);
-            const card = cardElements[cardNumbers[cardRandomIndex]];
+            const randomCardIndex = Math.floor(Math.random() * cardNumbers.length);
+            const randomCard = cardElements[cardNumbers[randomCardIndex]];
 
-            const cardBack = card.querySelector(".card-back");
-            cardBack.style.background = `url('img/animal_${Math.floor(i / 2)}.jpg')`;
+            const randomCardBack = randomCard.querySelector(".card-back");
+            randomCardBack.style.background = `url('img/animal_${Math.floor(i / 2)}.jpg')`;
 
-            cardNumbers.splice(cardRandomIndex, 1);
+            cardNumbers.splice(randomCardIndex, 1);
         }
     }
 
@@ -66,12 +75,16 @@
     setCards();
     shuffleCards();
 
-    levelDropdown.addEventListener("change", event => {
-        difficultyCardsQty = parseInt(event.target.value);
-        window.clearInterval(timeCounterInterval);
+    const resetCounters = () => {
         cardsLeftQty = difficultyCardsQty ;
         movesCounter.innerHTML = "0";
         timeCounter.innerHTML = "00:00";
+    };
+
+    levelDropdown.addEventListener("change", event => {
+        difficultyCardsQty = parseInt(event.target.value);
+        window.clearInterval(timeCounterInterval);
+        resetCounters();
         setBoardWidth();
         setCards();
         shuffleCards();
@@ -85,12 +98,16 @@
     const winBoardDifficulty = document.querySelector(".win-board-difficulty");
 
     const resolveWin = () => {
+        window.clearInterval(timeCounterInterval);
+        winBoard.style.display = "block";
+        winBoardTime.innerHTML = timeCounter.innerHTML;
+        winBoardMoves.innerHTML = movesCounter.innerHTML;
+        winBoardDifficulty.innerHTML = levelDropdown.options[levelDropdown.selectedIndex].text;
+    };
+
+    const determineWin = () => {
         if (cardsLeftQty == 0) {
-            window.clearInterval(timeCounterInterval);
-            winBoard.style.display = "block";
-            winBoardTime.innerHTML = timeCounter.innerHTML;
-            winBoardMoves.innerHTML = movesCounter.innerHTML;
-            winBoardDifficulty.innerHTML = levelDropdown.options[levelDropdown.selectedIndex].text;
+            resolveWin();
         }
     }
 
@@ -98,33 +115,46 @@
 
     winBoardRestart.addEventListener("click", () => {
         winBoard.style.display = "none";
-        movesCounter.innerHTML = "0";
-        timeCounter.innerHTML = "00:00";
-        cardsLeftQty = difficultyCardsQty;
+        resetCounters();
         setCards();
         shuffleCards();
     });
+
+    const incrementMoves = () => {
+        movesCounter.innerHTML = parseInt(movesCounter.innerHTML) + 1;
+    };
+
+    const areDifferentCards = (firstCard, secondCard) => {
+        return !firstCard.isSameNode(secondCard);
+    };
+
+    const hideCardsPair = (firstCard,secondCard) => {
+        firstCard.style.opacity = 0;
+        secondCard.style.opacity = 0;
+    };
 
     let reversedCard = "";
 
     cardElements.forEach(card => {
         card.addEventListener("click", () => {
             card.style.transform = "rotateY(180deg)";
-            if (reversedCard == "") {
-                reversedCard = card;
-            } else if (!card.isSameNode(reversedCard)) {
+            
+            if (movesCounter.innerHTML == "0" && !reversedCard) startTimer();
+
+            if (reversedCard == "") reversedCard = card;
+
+            if (areDifferentCards(card, reversedCard)) {
                 const reversedCardBack = reversedCard.querySelector(".card-back");
                 const currentCardBack = card.querySelector(".card-back");
                 const reversedCardBackBgImg = getComputedStyle(reversedCardBack).backgroundImage;
                 const currentCardBackBgImg = getComputedStyle(currentCardBack).backgroundImage;
 
-                movesCounter.innerHTML = parseInt(movesCounter.innerHTML) + 1;
+                incrementMoves();
 
                 board.style.pointerEvents = "none";
                 setTimeout(() => {
                     if (reversedCardBackBgImg == currentCardBackBgImg) {
-                        card.style.opacity = 0;
-                        reversedCard.style.opacity = 0;
+                        hideCardsPair(card, reversedCard);
                         card.style.pointerEvents = "none";
                         reversedCard.style.pointerEvents = "none";
                         cardsLeftQty -= 2;
@@ -133,10 +163,9 @@
                     reversedCard.style.transform = "none";
                     board.style.pointerEvents = "auto";
                     reversedCard = "";
-                    resolveWin();
+                    determineWin();
                 }, 1500);
             }
-            if (movesCounter.innerHTML == "0") startTimer();
         });
     });
 })();
